@@ -9,6 +9,7 @@ const User = require('../models/userModel')
 const registerUser = asyncHandler(async (req, res) => {
 
     const { name, email, password } = req.body;
+
     if (!name || !email || !password) {
         res.status(400);
         throw new Error('Field Can Not Be Null');
@@ -36,7 +37,8 @@ const registerUser = asyncHandler(async (req, res) => {
         res.status(201).json({
             _id: user.id,
             name: user.name,
-            emai: user.email
+            emai: user.email,
+            token: generateToken(user._id)
         })
     } else {
         res.status(400)
@@ -48,15 +50,40 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route POST api/user/login
 // @access public
 const loginUser = asyncHandler(async (req, res) => {
-    res.json({ message: 'Login User' });
+
+    const { email, password } = req.body;
+
+    //check user and match password
+    const user = await User.findOne({ email });
+
+    if (user && await bcrypt.compare(password, user.password)) {
+        res.status(201).json({
+            _id: user.id,
+            name: user.name,
+            emai: user.email,
+            token: generateToken(user._id)
+        })
+    } else {
+        res.status(400)
+        throw new Error('Invalid Credential');
+    }
 })
 
 // @desc get user data
 // @route GET api/user/me
-// @access public
+// @access private
 const getUser = asyncHandler(async (req, res) => {
-    res.json({ message: 'User Data' });
+    const { _id, name, email } = await User.findById(req.user.id);
+
+    res.status(200).json({
+        id: _id,
+        name,
+        email
+    })
 })
+
+// generate token
+const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d', })
 
 module.exports = {
     registerUser,
