@@ -11,15 +11,13 @@ const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-        res.status(400);
-        throw new Error('Field Can Not Be Null');
+        res.status(400).json({ message: 'Field can not be blank'});
     }
 
     //check user
     const userExist = await User.findOne({ email });
     if (userExist) {
-        res.status(400);
-        throw new Error('User already exists');
+        res.status(400).json({ message: 'User already exists'});
     }
 
     //hash password
@@ -41,8 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
             token: generateToken(user._id)
         })
     } else {
-        res.status(400)
-        throw new Error('Invalid User Data');
+        res.status(400).json({ message: 'Invalid User Data'})
     }
 })
 

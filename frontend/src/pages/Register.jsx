@@ -1,10 +1,12 @@
 import { FaUser } from 'react-icons/fa';
-import { useState, UseEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Alert from 'react-bootstrap/Alert';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector} from 'react-redux';
-import { register } from '../features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { register, reset } from '../features/auth/authSlice';
+import Loader from '../components/Loader';
 
 function Register() {
   const [formData, setformData] = useState({
@@ -18,10 +20,24 @@ function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user, isLoading, isError, isSuccess, message} = useSelector((state) => state.auth);
+  const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
 
-  const handleChange = (e) => { 
-    setformData( (prevState) => ({
+  useEffect(() => {
+
+    if (isSuccess || user) {
+      navigate('/')
+    }
+
+    // if (isLoading) {
+    //   dispatch(reset());
+    // }
+
+
+  }, [isLoading, isError, isSuccess, user, dispatch, navigate])
+
+
+  const handleChange = (e) => {
+    setformData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value
     }))
@@ -31,9 +47,9 @@ function Register() {
     e.preventDefault();
     console.log('fd');
 
-    if(password !== password2){
+    if (password !== password2) {
       console.log('password do not match');
-    } else{
+    } else {
       const userData = {
         name,
         email,
@@ -74,6 +90,12 @@ function Register() {
                   <Form.Control type="password" placeholder="Password"
                     name='password2' value={password2} onChange={handleChange} />
                 </Form.Group>
+                {isLoading && <Loader />}
+                {isError && (
+                  <Alert variant="danger">
+                    {message}
+                  </Alert>
+                )}
 
                 <Button variant="primary" type="submit" className='w-100'>
                   Submit
