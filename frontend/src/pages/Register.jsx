@@ -2,11 +2,11 @@ import { FaUser } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Alert from 'react-bootstrap/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { register, reset } from '../features/auth/authSlice';
+import { passwordMatchError, register, reset } from '../features/auth/authSlice';
 import Loader from '../components/Loader';
+import Message from '../components/Message';
 
 function Register() {
   const [formData, setformData] = useState({
@@ -25,15 +25,14 @@ function Register() {
   useEffect(() => {
 
     if (isSuccess || user) {
-      navigate('/')
+      navigate('/');
     }
 
-    // if (isLoading) {
-    //   dispatch(reset());
-    // }
+    if(navigate){
+      dispatch(reset());
+    }
 
-
-  }, [isLoading, isError, isSuccess, user, dispatch, navigate])
+  }, [isSuccess, user, dispatch, navigate])
 
 
   const handleChange = (e) => {
@@ -45,10 +44,9 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('fd');
 
     if (password !== password2) {
-      console.log('password do not match');
+      dispatch(passwordMatchError('Password does not match'));
     } else {
       const userData = {
         name,
@@ -70,33 +68,30 @@ function Register() {
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Name" name='name' value={name} onChange={handleChange} />
+                  <Form.Control type="text" placeholder="Enter Name" name='name' value={name} onChange={handleChange} required/>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Email address</Form.Label>
                   <Form.Control type="email" placeholder="Enter email"
-                    name='email' value={email} onChange={handleChange} />
+                    name='email' value={email} onChange={handleChange} required/>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Password</Form.Label>
                   <Form.Control type="password" placeholder="Password"
-                    name='password' value={password} onChange={handleChange} />
+                    name='password' value={password} onChange={handleChange} required/>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Confirm Password</Form.Label>
                   <Form.Control type="password" placeholder="Password"
-                    name='password2' value={password2} onChange={handleChange} />
+                    name='password2' value={password2} onChange={handleChange} required/>
                 </Form.Group>
                 {isLoading && <Loader />}
                 {isError && (
-                  <Alert variant="danger">
-                    {message}
-                  </Alert>
+                  <Message message={message}/>
                 )}
-
                 <Button variant="primary" type="submit" className='w-100'>
                   Submit
                 </Button>
