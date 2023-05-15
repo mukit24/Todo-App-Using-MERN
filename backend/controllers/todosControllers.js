@@ -32,17 +32,17 @@ const setTodo = asyncHandler(async (req, res) => {
 // @access private
 const updateTodo = asyncHandler(async (req, res) => {
     const todo = await Todo.findById(req.params.id);
-    const user = await User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
 
     if (!todo) {
         res.status(400).json({ message: 'Todo Not Found' })
     }
 
-    if (!user) {
+    if (!req.user) {
         res.status(400).json({ message: 'User not found' });
     }
 
-    if (todo.user != user.id) {
+    if (todo.user != req.user.id) {
         res.status(401).json({ message: 'Not Authorized' });
     }
 
@@ -56,17 +56,17 @@ const updateTodo = asyncHandler(async (req, res) => {
 // @access private
 const deleteTodo = asyncHandler(async (req, res) => {
     const todo = await Todo.findById(req.params.id);
-    const user = await User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
 
     if (!todo) {
         res.status(400).json({ message: 'Todo Not Found' })
     }
 
-    if (!user) {
+    if (!req.user) {
         res.status(400).json({ message: 'User not found' });
     }
 
-    if (todo.user != user.id) {
+    if (todo.user != req.user.id) {
         res.status(401).json({ message: 'Not Authorized' });
     }
 
