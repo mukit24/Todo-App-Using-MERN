@@ -8,7 +8,7 @@ const todoSchema = mongoose.Schema({
     },
     title : {
         type : String,
-        required : [true, 'Please Add a Tiltle of Todo']
+        required : [true, 'Please Add a Title of Todo']
     },
     complete : {
         type: Boolean,

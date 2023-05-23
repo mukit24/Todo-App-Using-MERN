@@ -15,7 +15,6 @@ const getTodos = asyncHandler(async (req, res) => {
 // @route POST api/todos/
 // @access private
 const setTodo = asyncHandler(async (req, res) => {
-
     if (!req.body.title) {
         res.status(400).json({ message: 'A todo must contain a name field.' })
     }
