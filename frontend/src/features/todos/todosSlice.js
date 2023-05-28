@@ -42,6 +42,8 @@ const todoSlice = createSlice({
     extraReducers:{
         [createTodo.pending]: (state) => {
             state.isLoading = true
+            state.isError = false
+            state.message = ''
         },
         [createTodo.fulfilled]: (state, action) => {
             state.isLoading = false
@@ -51,6 +53,7 @@ const todoSlice = createSlice({
         [createTodo.rejected]: (state, action) => {
             state.isLoading = false
             state.isError = true
+            state.isSuccess = false
             state.message = action.payload
         },
         [getTodos.pending]: (state) => {
